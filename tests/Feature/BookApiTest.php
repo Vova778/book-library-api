@@ -89,6 +89,17 @@ class BookApiTest extends TestCase
             ->assertJsonPath('data.author', $book->author);
     }
 
+    public function test_missing_book_returns_not_found_response(): void
+    {
+        $response = $this->getJson('/api/books/999');
+
+        $response
+            ->assertNotFound()
+            ->assertJson([
+                'message' => 'Book not found.',
+            ]);
+    }
+
     public function test_book_can_be_updated(): void
     {
         $book = Book::factory()->create();
