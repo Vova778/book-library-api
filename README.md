@@ -186,3 +186,5 @@ They can be regenerated with:
 ```bash
 docker compose exec app php artisan l5-swagger:generate
 ```
+
+If port 8080 is already in use, change `APP_PORT` and `APP_URL` in the `.env` file.

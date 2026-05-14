@@ -10,8 +10,8 @@ use OpenApi\Attributes as OA;
     description: 'REST API documentation for the Book Library application.'
 )]
 #[OA\Server(
-    url: 'http://localhost:8080',
-    description: 'Local Docker server'
+    url: '/',
+    description: 'Current application host'
 )]
 #[OA\Tag(
     name: 'Books',
