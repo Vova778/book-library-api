@@ -125,11 +125,32 @@ class BookApiDocumentation
         operationId: 'listBooks',
         summary: 'List books',
         tags: ['Books'],
+        parameters: [
+            new OA\Parameter(
+                name: 'page',
+                description: 'Page number.',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'integer', minimum: 1, example: 1)
+            ),
+            new OA\Parameter(
+                name: 'per_page',
+                description: 'Number of books per page.',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'integer', minimum: 1, maximum: 100, example: 15)
+            ),
+        ],
         responses: [
             new OA\Response(
                 response: 200,
                 description: 'Books list.',
                 content: new OA\JsonContent(ref: '#/components/schemas/BookCollectionResponse')
+            ),
+            new OA\Response(
+                response: 422,
+                description: 'Validation error.',
+                content: new OA\JsonContent(ref: '#/components/schemas/ValidationErrorResponse')
             ),
         ]
     )]

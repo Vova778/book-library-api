@@ -41,6 +41,21 @@ class BookApiTest extends TestCase
             ]);
     }
 
+    public function test_books_can_be_paginated_with_custom_page_size(): void
+    {
+        Book::factory()
+            ->count(5)
+            ->create();
+
+        $response = $this->getJson('/api/books?per_page=2');
+
+        $response
+            ->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonPath('meta.per_page', 2)
+            ->assertJsonPath('meta.total', 5);
+    }
+
     public function test_book_can_be_created(): void
     {
         $payload = [
