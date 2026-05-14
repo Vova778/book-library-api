@@ -50,7 +50,7 @@ A book contains the following fields:
 Clone the repository:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/Vova778/book-library-api.git
 cd book-library-api
 ```
 
