@@ -198,4 +198,82 @@ class BookApiTest extends TestCase
             'price_usd' => 24.99,
         ]);
     }
+
+    public function test_books_can_be_filtered_by_genre(): void
+    {
+        Book::factory()->create([
+            'title' => 'Fantasy Book',
+            'genre' => 'Fantasy',
+        ]);
+
+        Book::factory()->create([
+            'title' => 'Drama Book',
+            'genre' => 'Drama',
+        ]);
+
+        $response = $this->getJson('/api/books?genre=Fantasy');
+
+        $response
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.title', 'Fantasy Book')
+            ->assertJsonPath('data.0.genre', 'Fantasy');
+    }
+
+    public function test_books_can_be_searched_by_title(): void
+    {
+        Book::factory()->create([
+            'title' => 'Clean Architecture',
+        ]);
+
+        Book::factory()->create([
+            'title' => 'Domain-Driven Design',
+        ]);
+
+        $response = $this->getJson('/api/books?search=Clean');
+
+        $response
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.title', 'Clean Architecture');
+    }
+
+    public function test_books_can_be_sorted_by_price(): void
+    {
+        Book::factory()->create([
+            'title' => 'Expensive Book',
+            'price_usd' => 99.99,
+        ]);
+
+        Book::factory()->create([
+            'title' => 'Cheap Book',
+            'price_usd' => 9.99,
+        ]);
+
+        $response = $this->getJson('/api/books?sort_by=price_usd&sort_direction=asc');
+
+        $response
+            ->assertOk()
+            ->assertJsonPath('data.0.title', 'Cheap Book')
+            ->assertJsonPath('data.1.title', 'Expensive Book');
+    }
+
+    public function test_book_creation_rejects_invalid_genre(): void
+    {
+        $payload = [
+            'title' => 'Invalid Genre Book',
+            'publisher' => 'Test Publisher',
+            'author' => 'Test Author',
+            'genre' => 'Invalid Genre',
+            'publication_date' => '2024-01-01',
+            'word_count' => 50000,
+            'price_usd' => 19.99,
+        ];
+
+        $response = $this->postJson('/api/books', $payload);
+
+        $response
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['genre']);
+    }
 }
