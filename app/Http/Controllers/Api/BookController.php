@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\IndexBookRequest;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Http\Resources\BookResource;
@@ -18,9 +19,9 @@ class BookController extends Controller
     ) {
     }
 
-    public function index(): AnonymousResourceCollection
+    public function index(IndexBookRequest $request): AnonymousResourceCollection
     {
-        $books = $this->bookService->paginate();
+        $books = $this->bookService->paginate($request->validated());
 
         return BookResource::collection($books);
     }
