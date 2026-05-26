@@ -16,14 +16,19 @@ The application allows tracking books only, without clients, users, borrowing lo
 
 ## Features
 
-- List books
+- List books with pagination
+- Filter books by genre
+- Search books by title, author, or publisher
+- Sort books by allowed fields
 - Create a book
 - Show a single book
 - Update a book
 - Delete a book
-- Validate API requests
+- Validate API requests with Form Requests
+- Validate book genres with PHP enum
+- Use a service layer for book operations
 - Seed database with sample books
-- Run automated tests
+- Run automated Feature and Unit tests
 - View Swagger API documentation
 
 ## Book model
@@ -39,6 +44,18 @@ A book contains the following fields:
 | `publication_date` | date | Book publication date |
 | `word_count` | integer | Amount of words in the book |
 | `price_usd` | decimal | Book price in US dollars |
+
+## Allowed genres
+
+The `genre` field accepts only predefined values:
+
+- `Fantasy`
+- `Science Fiction`
+- `Drama`
+- `Mystery`
+- `Biography`
+- `History`
+- `Programming`
 
 ## Requirements
 
@@ -112,12 +129,73 @@ http://localhost:8080/api/documentation
 | PATCH | `/api/books/{book}` | Update a book |
 | DELETE | `/api/books/{book}` | Delete a book |
 
+## List query parameters
+
+The `GET /api/books` endpoint supports pagination, filtering, search, and sorting.
+
+| Parameter | Type | Description | Example |
+| --- | --- | --- | --- |
+| `page` | integer | Page number | `1` |
+| `per_page` | integer | Number of books per page, from 1 to 100 | `15` |
+| `genre` | string | Filter books by allowed genre | `Programming` |
+| `search` | string | Search by title, author, or publisher | `Clean` |
+| `sort_by` | string | Sort field | `price_usd` |
+| `sort_direction` | string | Sort direction | `asc` |
+
+Allowed `sort_by` values:
+
+- `created_at`
+- `title`
+- `publication_date`
+- `price_usd`
+- `word_count`
+
+Allowed `sort_direction` values:
+
+- `asc`
+- `desc`
+
 ## Example requests
 
 ### List books
 
 ```bash
 curl http://localhost:8080/api/books \
+  -H "Accept: application/json"
+```
+
+### List books with pagination
+
+```bash
+curl "http://localhost:8080/api/books?page=1&per_page=10" \
+  -H "Accept: application/json"
+```
+
+### Filter books by genre
+
+```bash
+curl "http://localhost:8080/api/books?genre=Programming" \
+  -H "Accept: application/json"
+```
+
+### Search books
+
+```bash
+curl "http://localhost:8080/api/books?search=Clean" \
+  -H "Accept: application/json"
+```
+
+### Sort books by price
+
+```bash
+curl "http://localhost:8080/api/books?sort_by=price_usd&sort_direction=asc" \
+  -H "Accept: application/json"
+```
+
+### Combine filters, search, sorting, and pagination
+
+```bash
+curl "http://localhost:8080/api/books?genre=Programming&search=Clean&sort_by=price_usd&sort_direction=asc&page=1&per_page=10" \
   -H "Accept: application/json"
 ```
 
@@ -171,10 +249,16 @@ Run all tests:
 docker compose exec app php artisan test
 ```
 
-Run feature tests only:
+Run Feature tests only:
 
 ```bash
 docker compose exec app php artisan test --testsuite=Feature
+```
+
+Run Unit tests only:
+
+```bash
+docker compose exec app php artisan test --testsuite=Unit
 ```
 
 ## Notes
