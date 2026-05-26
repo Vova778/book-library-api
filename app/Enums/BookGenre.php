@@ -12,11 +12,18 @@ enum BookGenre: string
     case History = 'History';
     case Programming = 'Programming';
 
+    public const VALUES = [
+        self::Fantasy->value,
+        self::ScienceFiction->value,
+        self::Drama->value,
+        self::Mystery->value,
+        self::Biography->value,
+        self::History->value,
+        self::Programming->value,
+    ];
+
     public static function values(): array
     {
-        return array_map(
-            static fn(self $genre): string => $genre->value,
-            self::cases()
-        );
+        return self::VALUES;
     }
 }

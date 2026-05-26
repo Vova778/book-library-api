@@ -2,6 +2,8 @@
 
 namespace App\OpenApi;
 
+use App\Enums\BookGenre;
+use App\Support\BookSort;
 use OpenApi\Attributes as OA;
 
 #[OA\Info(
@@ -36,7 +38,12 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: 'title', type: 'string', example: 'Clean Code'),
         new OA\Property(property: 'publisher', type: 'string', example: 'Prentice Hall'),
         new OA\Property(property: 'author', type: 'string', example: 'Robert C. Martin'),
-        new OA\Property(property: 'genre', type: 'string', example: 'Programming'),
+        new OA\Property(
+            property: 'genre',
+            type: 'string',
+            enum: BookGenre::VALUES,
+            example: 'Programming'
+        ),
         new OA\Property(property: 'publication_date', type: 'string', format: 'date', example: '2008-08-01'),
         new OA\Property(property: 'word_count', type: 'integer', example: 120000),
         new OA\Property(property: 'price_usd', type: 'string', example: '39.99'),
@@ -60,7 +67,12 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: 'title', type: 'string', maxLength: 255, example: 'Clean Code'),
         new OA\Property(property: 'publisher', type: 'string', maxLength: 255, example: 'Prentice Hall'),
         new OA\Property(property: 'author', type: 'string', maxLength: 255, example: 'Robert C. Martin'),
-        new OA\Property(property: 'genre', type: 'string', maxLength: 255, example: 'Programming'),
+        new OA\Property(
+            property: 'genre',
+            type: 'string',
+            enum: BookGenre::VALUES,
+            example: 'Programming'
+        ),
         new OA\Property(property: 'publication_date', type: 'string', format: 'date', example: '2008-08-01'),
         new OA\Property(property: 'word_count', type: 'integer', minimum: 1, example: 120000),
         new OA\Property(property: 'price_usd', type: 'number', format: 'float', minimum: 0, example: 39.99),
@@ -73,7 +85,12 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: 'title', type: 'string', maxLength: 255, example: 'Updated Book Title'),
         new OA\Property(property: 'publisher', type: 'string', maxLength: 255, example: 'Updated Publisher'),
         new OA\Property(property: 'author', type: 'string', maxLength: 255, example: 'Updated Author'),
-        new OA\Property(property: 'genre', type: 'string', maxLength: 255, example: 'Programming'),
+        new OA\Property(
+            property: 'genre',
+            type: 'string',
+            enum: BookGenre::VALUES,
+            example: 'Programming'
+        ),
         new OA\Property(property: 'publication_date', type: 'string', format: 'date', example: '2008-08-01'),
         new OA\Property(property: 'word_count', type: 'integer', minimum: 1, example: 125000),
         new OA\Property(property: 'price_usd', type: 'number', format: 'float', minimum: 0, example: 34.99),
@@ -139,6 +156,46 @@ class BookApiDocumentation
                 in: 'query',
                 required: false,
                 schema: new OA\Schema(type: 'integer', minimum: 1, maximum: 100, example: 15)
+            ),
+            new OA\Parameter(
+                name: 'genre',
+                description: 'Filter books by genre.',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(
+                    type: 'string',
+                    enum: BookGenre::VALUES,
+                    example: 'Programming'
+                )
+            ),
+            new OA\Parameter(
+                name: 'search',
+                description: 'Search books by title, author, or publisher.',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'string', maxLength: 255, example: 'Clean')
+            ),
+            new OA\Parameter(
+                name: 'sort_by',
+                description: 'Field used for sorting books.',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(
+                    type: 'string',
+                    enum: BookSort::ALLOWED_FIELDS,
+                    example: 'price_usd'
+                )
+            ),
+            new OA\Parameter(
+                name: 'sort_direction',
+                description: 'Sorting direction.',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(
+                    type: 'string',
+                    enum: BookSort::ALLOWED_DIRECTIONS,
+                    example: 'asc'
+                )
             ),
         ],
         responses: [
