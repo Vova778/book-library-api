@@ -7,30 +7,27 @@ use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
+use App\Services\BookService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class BookController extends Controller
 {
-    public function index(Request $request): AnonymousResourceCollection
+    public function __construct(
+        private readonly BookService $bookService
+    ) {
+    }
+
+    public function index(): AnonymousResourceCollection
     {
-        $validated = $request->validate([
-            'page' => 'sometimes|integer|min:1',
-            'per_page' => 'sometimes|integer|min:1|max:100',
-        ]);
-
-        $perPage = $validated['per_page'] ?? 15;
-
-        $books = Book::latest()
-            ->paginate($perPage);
+        $books = $this->bookService->paginate();
 
         return BookResource::collection($books);
     }
 
     public function store(StoreBookRequest $request): JsonResponse
     {
-        $book = Book::create($request->validated());
+        $book = $this->bookService->create($request->validated());
 
         return (new BookResource($book))
             ->response()
@@ -44,14 +41,14 @@ class BookController extends Controller
 
     public function update(UpdateBookRequest $request, Book $book): BookResource
     {
-        $book->update($request->validated());
+        $book = $this->bookService->update($book, $request->validated());
 
         return new BookResource($book);
     }
 
     public function destroy(Book $book): JsonResponse
     {
-        $book->delete();
+        $this->bookService->delete($book);
 
         return response()->json(null, 204);
     }
