@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\BookGenre;
 use App\Models\Book;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -21,15 +22,7 @@ class BookFactory extends Factory
             'title' => fake()->sentence(3),
             'publisher' => fake()->company(),
             'author' => fake()->name(),
-            'genre' => fake()->randomElement([
-                'Fantasy',
-                'Science Fiction',
-                'Drama',
-                'Mystery',
-                'Biography',
-                'History',
-                'Programming',
-            ]),
+            'genre' => fake()->randomElement(BookGenre::values()),
             'publication_date' => fake()->dateTimeBetween('-50 years', 'now')->format('Y-m-d'),
             'word_count' => fake()->numberBetween(30000, 250000),
             'price_usd' => fake()->randomFloat(2, 5, 150),

@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\BookGenre;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateBookRequest extends FormRequest
 {
@@ -26,7 +28,7 @@ class UpdateBookRequest extends FormRequest
             'title' => 'sometimes|required|string|max:255',
             'publisher' => 'sometimes|required|string|max:255',
             'author' => 'sometimes|required|string|max:255',
-            'genre' => 'sometimes|required|string|max:255',
+            'genre' => ['sometimes', 'required', Rule::enum(BookGenre::class)],
             'publication_date' => 'sometimes|required|date',
             'word_count' => 'sometimes|required|integer|min:1',
             'price_usd' => 'sometimes|required|numeric|decimal:0,2|min:0|max:99999999.99',
